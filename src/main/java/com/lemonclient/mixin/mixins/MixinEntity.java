@@ -1,28 +1,23 @@
-// 
-// Decompiled by Procyon v0.6.0
-// 
-
 package com.lemonclient.mixin.mixins;
 
-import java.util.List;
+import com.lemonclient.api.event.events.EntityCollisionEvent;
 import com.lemonclient.api.event.events.StepEvent;
+import com.lemonclient.client.LemonClient;
+import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import com.lemonclient.client.LemonClient;
-import com.lemonclient.api.event.events.EntityCollisionEvent;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
-import org.spongepowered.asm.mixin.Shadow;
-import net.minecraft.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin({ Entity.class })
-public abstract class MixinEntity
-{
+@Mixin(value={Entity.class})
+public abstract class MixinEntity {
     @Shadow
     public double posX;
     @Shadow
@@ -52,37 +47,36 @@ public abstract class MixinEntity
     @Shadow
     public float height;
     private Float prevHeight;
-    
+
     @Shadow
     public abstract AxisAlignedBB getEntityBoundingBox();
-    
+
     @Shadow
     public abstract boolean isSneaking();
-    
+
     @Shadow
-    @Override
-    public abstract boolean equals(final Object p0);
-    
-    @Inject(method = { "applyEntityCollision" }, at = { @At("HEAD") }, cancellable = true)
-    public void velocity(final Entity entityIn, final CallbackInfo ci) {
-        final EntityCollisionEvent event = new EntityCollisionEvent();
+    public abstract boolean equals(Object var1);
+
+    @Inject(method={"applyEntityCollision"}, at={@At(value="HEAD")}, cancellable=true)
+    public void velocity(Entity entityIn, CallbackInfo ci) {
+        EntityCollisionEvent event = new EntityCollisionEvent();
         LemonClient.EVENT_BUS.post(event);
         if (event.isCancelled()) {
             ci.cancel();
         }
     }
-    
-    @Inject(method = { "move" }, at = { @At(value = "INVOKE", target = "net/minecraft/entity/Entity.resetPositionToBB()V", ordinal = 1) })
-    private void resetPositionToBBHook(final MoverType type, final double x, final double y, final double z, final CallbackInfo info) {
+
+    @Inject(method={"move"}, at={@At(value="INVOKE", target="net/minecraft/entity/Entity.resetPositionToBB()V", ordinal=1)})
+    private void resetPositionToBBHook(MoverType type, double x, double y, double z, CallbackInfo info) {
         if (EntityPlayerSP.class.isInstance(this) && this.prevHeight != null) {
-            this.stepHeight = this.prevHeight;
+            this.stepHeight = this.prevHeight.floatValue();
             this.prevHeight = null;
         }
     }
-    
-    @Inject(method = { "move" }, at = { @At("HEAD") })
-    public void move(final MoverType type, final double tx, final double ty, final double tz, final CallbackInfo ci) {
-        final Minecraft mc = Minecraft.getMinecraft();
+
+    @Inject(method={"move"}, at={@At(value="HEAD")})
+    public void move(MoverType type, double tx, double ty, double tz, CallbackInfo ci) {
+        Minecraft mc = Minecraft.getMinecraft();
         if (mc.getCurrentServerData() == null) {
             return;
         }
@@ -94,7 +88,8 @@ public abstract class MixinEntity
         }
         AxisAlignedBB bb = mc.player.getEntityBoundingBox();
         if (!mc.player.noClip) {
-            if (type.equals(MoverType.PISTON)) {
+            boolean flag;
+            if (type.equals((Object)MoverType.PISTON)) {
                 return;
             }
             mc.world.profiler.startSection("move");
@@ -102,140 +97,117 @@ public abstract class MixinEntity
                 return;
             }
             double d2 = x;
-            final double d3 = y;
+            double d3 = y;
             double d4 = z;
             if ((type == MoverType.SELF || type == MoverType.PLAYER) && mc.player.onGround && mc.player.isSneaking()) {
-                final double d5 = 0.05;
-                while (x != 0.0 && mc.world.getCollisionBoxes(mc.player, bb.offset(x, -mc.player.stepHeight, 0.0)).isEmpty()) {
-                    if (x < 0.05 && x >= -0.05) {
-                        x = 0.0;
-                    }
-                    else if (x > 0.0) {
-                        x -= 0.05;
-                    }
-                    else {
-                        x += 0.05;
-                    }
+                double d5 = 0.05;
+                while (x != 0.0 && mc.world.getCollisionBoxes((Entity)mc.player, bb.offset(x, (double)(-mc.player.stepHeight), 0.0)).isEmpty()) {
+                    x = x < 0.05 && x >= -0.05 ? 0.0 : (x > 0.0 ? (x -= 0.05) : (x += 0.05));
                     d2 = x;
                 }
-                while (z != 0.0 && mc.world.getCollisionBoxes(mc.player, bb.offset(0.0, -mc.player.stepHeight, z)).isEmpty()) {
-                    if (z < 0.05 && z >= -0.05) {
-                        z = 0.0;
-                    }
-                    else if (z > 0.0) {
-                        z -= 0.05;
-                    }
-                    else {
-                        z += 0.05;
-                    }
+                while (z != 0.0 && mc.world.getCollisionBoxes((Entity)mc.player, bb.offset(0.0, (double)(-mc.player.stepHeight), z)).isEmpty()) {
+                    z = z < 0.05 && z >= -0.05 ? 0.0 : (z > 0.0 ? (z -= 0.05) : (z += 0.05));
                     d4 = z;
                 }
-                while (x != 0.0 && z != 0.0 && mc.world.getCollisionBoxes(mc.player, bb.offset(x, -mc.player.stepHeight, z)).isEmpty()) {
-                    if (x < 0.05 && x >= -0.05) {
-                        x = 0.0;
-                    }
-                    else if (x > 0.0) {
-                        x -= 0.05;
-                    }
-                    else {
-                        x += 0.05;
-                    }
+                while (x != 0.0 && z != 0.0 && mc.world.getCollisionBoxes((Entity)mc.player, bb.offset(x, (double)(-mc.player.stepHeight), z)).isEmpty()) {
+                    x = x < 0.05 && x >= -0.05 ? 0.0 : (x > 0.0 ? (x -= 0.05) : (x += 0.05));
                     d2 = x;
-                    if (z < 0.05 && z >= -0.05) {
-                        z = 0.0;
-                    }
-                    else if (z > 0.0) {
-                        z -= 0.05;
-                    }
-                    else {
-                        z += 0.05;
-                    }
+                    z = z < 0.05 && z >= -0.05 ? 0.0 : (z > 0.0 ? (z -= 0.05) : (z += 0.05));
                     d4 = z;
                 }
             }
-            final List<AxisAlignedBB> list1 = mc.world.getCollisionBoxes(mc.player, bb.expand(x, y, z));
+            List list1 = mc.world.getCollisionBoxes((Entity)mc.player, bb.expand(x, y, z));
             if (y != 0.0) {
-                for (int k = 0, l = list1.size(); k < l; ++k) {
-                    y = list1.get(k).calculateYOffset(bb, y);
+                int l = list1.size();
+                for (int k = 0; k < l; ++k) {
+                    y = ((AxisAlignedBB)list1.get(k)).calculateYOffset(bb, y);
                 }
                 bb = bb.offset(0.0, y, 0.0);
             }
             if (x != 0.0) {
-                for (int j5 = 0, l2 = list1.size(); j5 < l2; ++j5) {
-                    x = list1.get(j5).calculateXOffset(bb, x);
+                int l5 = list1.size();
+                for (int j5 = 0; j5 < l5; ++j5) {
+                    x = ((AxisAlignedBB)list1.get(j5)).calculateXOffset(bb, x);
                 }
                 if (x != 0.0) {
                     bb = bb.offset(x, 0.0, 0.0);
                 }
             }
             if (z != 0.0) {
-                for (int k2 = 0, i6 = list1.size(); k2 < i6; ++k2) {
-                    z = list1.get(k2).calculateZOffset(bb, z);
+                int i6 = list1.size();
+                for (int k5 = 0; k5 < i6; ++k5) {
+                    z = ((AxisAlignedBB)list1.get(k5)).calculateZOffset(bb, z);
                 }
                 if (z != 0.0) {
                     bb = bb.offset(0.0, 0.0, z);
                 }
             }
-            final boolean flag = mc.player.onGround || (d3 != y && d3 < 0.0);
+            boolean bl = flag = mc.player.onGround || d3 != y && d3 < 0.0;
             if (mc.player.stepHeight > 0.0f && flag && (d2 != x || d4 != z)) {
-                final double d6 = x;
-                final double d7 = y;
-                final double d8 = z;
+                double d14 = x;
+                double d6 = y;
+                double d7 = z;
                 y = mc.player.stepHeight;
-                final List<AxisAlignedBB> list2 = mc.world.getCollisionBoxes(mc.player, bb.expand(d2, y, d4));
+                List list = mc.world.getCollisionBoxes((Entity)mc.player, bb.expand(d2, y, d4));
                 AxisAlignedBB axisalignedbb2 = bb;
-                final AxisAlignedBB axisalignedbb3 = axisalignedbb2.expand(d2, 0.0, d4);
-                double d9 = y;
-                for (int j6 = 0, k3 = list2.size(); j6 < k3; ++j6) {
-                    d9 = list2.get(j6).calculateYOffset(axisalignedbb3, d9);
+                AxisAlignedBB axisalignedbb3 = axisalignedbb2.expand(d2, 0.0, d4);
+                double d8 = y;
+                int k1 = list.size();
+                for (int j1 = 0; j1 < k1; ++j1) {
+                    d8 = ((AxisAlignedBB)list.get(j1)).calculateYOffset(axisalignedbb3, d8);
                 }
-                axisalignedbb2 = axisalignedbb2.offset(0.0, d9, 0.0);
-                double d10 = d2;
-                for (int l3 = 0, i7 = list2.size(); l3 < i7; ++l3) {
-                    d10 = list2.get(l3).calculateXOffset(axisalignedbb2, d10);
+                axisalignedbb2 = axisalignedbb2.offset(0.0, d8, 0.0);
+                double d18 = d2;
+                int i2 = list.size();
+                for (int l1 = 0; l1 < i2; ++l1) {
+                    d18 = ((AxisAlignedBB)list.get(l1)).calculateXOffset(axisalignedbb2, d18);
                 }
-                axisalignedbb2 = axisalignedbb2.offset(d10, 0.0, 0.0);
-                double d11 = d4;
-                for (int j7 = 0, k4 = list2.size(); j7 < k4; ++j7) {
-                    d11 = list2.get(j7).calculateZOffset(axisalignedbb2, d11);
+                axisalignedbb2 = axisalignedbb2.offset(d18, 0.0, 0.0);
+                double d19 = d4;
+                int k2 = list.size();
+                for (int j2 = 0; j2 < k2; ++j2) {
+                    d19 = ((AxisAlignedBB)list.get(j2)).calculateZOffset(axisalignedbb2, d19);
                 }
-                axisalignedbb2 = axisalignedbb2.offset(0.0, 0.0, d11);
+                axisalignedbb2 = axisalignedbb2.offset(0.0, 0.0, d19);
                 AxisAlignedBB axisalignedbb4 = bb;
-                double d12 = y;
-                for (int l4 = 0, i8 = list2.size(); l4 < i8; ++l4) {
-                    d12 = list2.get(l4).calculateYOffset(axisalignedbb4, d12);
+                double d20 = y;
+                int i3 = list.size();
+                for (int l2 = 0; l2 < i3; ++l2) {
+                    d20 = ((AxisAlignedBB)list.get(l2)).calculateYOffset(axisalignedbb4, d20);
                 }
-                axisalignedbb4 = axisalignedbb4.offset(0.0, d12, 0.0);
-                double d13 = d2;
-                for (int j8 = 0, k5 = list2.size(); j8 < k5; ++j8) {
-                    d13 = list2.get(j8).calculateXOffset(axisalignedbb4, d13);
+                axisalignedbb4 = axisalignedbb4.offset(0.0, d20, 0.0);
+                double d21 = d2;
+                int k3 = list.size();
+                for (int j3 = 0; j3 < k3; ++j3) {
+                    d21 = ((AxisAlignedBB)list.get(j3)).calculateXOffset(axisalignedbb4, d21);
                 }
-                axisalignedbb4 = axisalignedbb4.offset(d13, 0.0, 0.0);
-                double d14 = d4;
-                for (int l5 = 0, i9 = list2.size(); l5 < i9; ++l5) {
-                    d14 = list2.get(l5).calculateZOffset(axisalignedbb4, d14);
+                axisalignedbb4 = axisalignedbb4.offset(d21, 0.0, 0.0);
+                double d22 = d4;
+                int i4 = list.size();
+                for (int l3 = 0; l3 < i4; ++l3) {
+                    d22 = ((AxisAlignedBB)list.get(l3)).calculateZOffset(axisalignedbb4, d22);
                 }
-                axisalignedbb4 = axisalignedbb4.offset(0.0, 0.0, d14);
-                final double d15 = d10 * d10 + d11 * d11;
-                final double d16 = d13 * d13 + d14 * d14;
-                if (d15 > d16) {
-                    x = d10;
-                    z = d11;
-                    y = -d9;
+                axisalignedbb4 = axisalignedbb4.offset(0.0, 0.0, d22);
+                double d23 = d18 * d18 + d19 * d19;
+                double d9 = d21 * d21 + d22 * d22;
+                if (d23 > d9) {
+                    x = d18;
+                    z = d19;
+                    y = -d8;
                     bb = axisalignedbb2;
-                }
-                else {
-                    x = d13;
-                    z = d14;
-                    y = -d12;
+                } else {
+                    x = d21;
+                    z = d22;
+                    y = -d20;
                     bb = axisalignedbb4;
                 }
-                for (int j9 = 0, k6 = list2.size(); j9 < k6; ++j9) {
-                    y = list2.get(j9).calculateYOffset(bb, y);
+                int k4 = list.size();
+                for (int j4 = 0; j4 < k4; ++j4) {
+                    y = ((AxisAlignedBB)list.get(j4)).calculateYOffset(bb, y);
                 }
                 bb = bb.offset(0.0, y, 0.0);
-                if (d6 * d6 + d8 * d8 < x * x + z * z) {
-                    final StepEvent event = new StepEvent(bb);
+                if (!(d14 * d14 + d7 * d7 >= x * x + z * z)) {
+                    StepEvent event = new StepEvent(bb);
                     LemonClient.EVENT_BUS.post(event);
                     if (event.isCancelled()) {
                         mc.player.stepHeight = 0.5f;

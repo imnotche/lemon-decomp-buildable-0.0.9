@@ -153,9 +153,7 @@ public class AntiHoleCamper extends Module
             if (event.getPhase() != Phase.PRE || this.rotation == null) {
             }
             else {
-                new PlayerPacket(this, new Vec2f(this.rotation.x, PlayerPacketManager.INSTANCE.getServerSideRotation().y));
-                final PlayerPacket playerPacket = null;
-                final PlayerPacket packet = playerPacket;
+                final PlayerPacket packet = new PlayerPacket(this, new Vec2f(this.rotation.x, PlayerPacketManager.INSTANCE.getServerSideRotation().y));
                 PlayerPacketManager.INSTANCE.addPacket(packet);
             }
         }, new Predicate[0]);

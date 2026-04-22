@@ -42,6 +42,7 @@ public class Fixer {
     public static void disableJndiManager() {
         try {
             Fixer.disableJndiManager0();
+        } catch (IllegalStateException ignored) {
         } catch (Exception ex) {
             throw new ExceptionInInitializerError(ex);
         }

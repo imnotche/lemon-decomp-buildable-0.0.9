@@ -249,9 +249,7 @@ public class PistonAura extends Module
             if (this.rotation == null || event.getPhase() != Phase.PRE) {
             }
             else {
-                new PlayerPacket(this, new Vec2f(this.rotation.x, 0.0f));
-                final PlayerPacket playerPacket = null;;
-                final PlayerPacket packet = playerPacket;
+                final PlayerPacket packet = new PlayerPacket(this, new Vec2f(this.rotation.x, 0.0f));
                 PlayerPacketManager.INSTANCE.addPacket(packet);
             }
         }, new Predicate[0]);

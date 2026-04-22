@@ -48,6 +48,9 @@ public class PlayerTweaks extends Module
         this.noSlow = this.registerBoolean("No Slow", false);
         this.antiKnockBack = this.registerBoolean("Velocity", false);
         this.eventListener = new Listener<InputUpdateEvent>(event -> {
+            if (PlayerTweaks.mc.player == null || PlayerTweaks.mc.world == null) {
+                return;
+            }
             if (this.noSlow.getValue() && PlayerTweaks.mc.player.isHandActive() && !PlayerTweaks.mc.player.isRiding()) {
                 event.getMovementInput();
                 final MovementInput movementInput = new MovementInput();
@@ -63,6 +66,9 @@ public class PlayerTweaks extends Module
             }
         }, new Predicate[0]);
         this.receiveListener = new Listener<PacketEvent.Receive>(event -> {
+            if (PlayerTweaks.mc.player == null) {
+                return;
+            }
             if (this.antiKnockBack.getValue()) {
                 if (event.getPacket() instanceof SPacketEntityVelocity && ((SPacketEntityVelocity)event.getPacket()).getEntityID() == PlayerTweaks.mc.player.getEntityId()) {
                     event.cancel();
@@ -73,6 +79,9 @@ public class PlayerTweaks extends Module
             }
         }, new Predicate[0]);
         this.sendListener = new Listener<PacketEvent.Send>(event -> {
+            if (PlayerTweaks.mc.player == null) {
+                return;
+            }
             if (this.noFall.getValue() && event.getPacket() instanceof CPacketPlayer && PlayerTweaks.mc.player.fallDistance >= 3.0) {
                 final CPacketPlayer packet = (CPacketPlayer)event.getPacket();
                 packet.onGround = true;

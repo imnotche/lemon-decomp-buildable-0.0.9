@@ -54,10 +54,7 @@ public class ChorusViewer extends Module
             if (event.getPacket() instanceof SPacketSoundEffect) {
                 final SPacketSoundEffect soundPacket = (SPacketSoundEffect)event.getPacket();
                 if (soundPacket.getSound() == SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT) {
-                    final ArrayList<renderClass> toRender = this.toRender;
-                    new renderClass(new Vec3d(soundPacket.getX(), soundPacket.getY(), soundPacket.getZ()), this.life.getValue(), this.render.getValue(), this.color.getValue(), this.circleRange.getValue(), this.desyncCircle.getValue(), this.stepRainbowCircle.getValue(), this.circleRange.getValue(), this.stepRainbowCircle.getValue(), this.increaseHeight.getValue(), this.speedIncrease.getValue());
-                    final renderClass e = null;
-                    toRender.add(e);
+                    this.toRender.add(new renderClass(new Vec3d(soundPacket.getX(), soundPacket.getY(), soundPacket.getZ()), this.life.getValue(), this.render.getValue(), this.color.getValue(), this.circleRange.getValue(), this.desyncCircle.getValue(), this.stepRainbowCircle.getValue(), this.circleRange.getValue(), this.stepRainbowCircle.getValue(), this.increaseHeight.getValue(), this.speedIncrease.getValue()));
                 }
             }
         }, new Predicate[0]);

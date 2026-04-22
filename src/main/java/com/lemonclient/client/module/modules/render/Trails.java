@@ -71,20 +71,12 @@ public class Trails extends Module
                         animation.stop();
                         this.ids.put(packet.getEntityID(), animation);
                         this.traceLists.put(packet.getEntityID(), new ArrayList<Trace>());
-                        final Map<Integer, Trace> traces = this.traces;
-                        packet.getEntityID();
-                        new Trace(0, null, Trails.mc.world.provider.getDimensionType(), new Vec3d(packet.getX(), packet.getY(), packet.getZ()), new ArrayList<Trace.TracePos>());
-                        final Trace trace = null;
-                        final Object o = new Object();
-                        traces.put((Integer)o, trace);
+                        this.traces.put(packet.getEntityID(), new Trace(0, null, Trails.mc.world.provider.getDimensionType(), new Vec3d(packet.getX(), packet.getY(), packet.getZ()), new ArrayList<Trace.TracePos>()));
                     }
                 }
                 if (event.getPacket() instanceof SPacketDestroyEntities) {
-                    ((SPacketDestroyEntities)event.getPacket()).getEntityIDs();
-                    final int[] array = new int[0];
-                    int i = 0;
-                    for (int length = array.length; i < length; ++i) {
-                        final int id = array[i];
+                    final int[] entityIds = ((SPacketDestroyEntities)event.getPacket()).getEntityIDs();
+                    for (final int id : entityIds) {
                         if (this.ids.containsKey(id)) {
                             this.ids.get(id).play();
                         }

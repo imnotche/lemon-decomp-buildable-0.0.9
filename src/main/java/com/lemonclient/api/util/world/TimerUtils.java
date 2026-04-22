@@ -8,9 +8,7 @@ import java.util.Iterator;
 import java.lang.reflect.Field;
 import com.lemonclient.api.util.misc.Mapping;
 import net.minecraft.util.Timer;
-import com.lemonclient.mixin.mixins.accessor.AccessorTimer;
 import net.minecraft.client.Minecraft;
-import com.lemonclient.mixin.mixins.accessor.AccessorMinecraft;
 import java.util.HashMap;
 
 public class TimerUtils
@@ -19,36 +17,68 @@ public class TimerUtils
     private static final HashMap<Integer, Float> multipliers;
     
     public static void setTickLength(final float speed) {
-        final Timer timer = ((AccessorMinecraft)Minecraft.getMinecraft()).getTimer();
-        ((AccessorTimer)timer).setTickLength(speed);
+        setTickLength0(resolveTimer(), speed);
     }
     
     public static float getTickLength() {
-        final Timer timer = ((AccessorMinecraft)Minecraft.getMinecraft()).getTimer();
-        return ((AccessorTimer)timer).getTickLength();
+        return getTickLength0(resolveTimer());
     }
     
     public static void setSpeed(final float speed) {
-        final Timer timer = ((AccessorMinecraft)Minecraft.getMinecraft()).getTimer();
-        ((AccessorTimer)timer).setTickLength(50.0f / speed);
+        setTickLength0(resolveTimer(), 50.0f / speed);
     }
     
     public static float getTimer() {
-        final Timer timer = ((AccessorMinecraft)Minecraft.getMinecraft()).getTimer();
-        return 50.0f / ((AccessorTimer)timer).getTickLength();
+        return 50.0f / getTickLength0(resolveTimer());
     }
     
     public static void setTimerSpeed(final float speed) {
         try {
-            final Field timer = Minecraft.class.getDeclaredField(Mapping.timer);
-            timer.setAccessible(true);
-            final Field tickLength = Timer.class.getDeclaredField(Mapping.tickLength);
-            tickLength.setAccessible(true);
-            tickLength.setFloat(timer.get(Minecraft.getMinecraft()), 50.0f / speed);
+            setTickLength0(resolveTimer(), 50.0f / speed);
         }
         catch (final Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static Timer resolveTimer() {
+        try {
+            final Field timerField = findField(Minecraft.class, Mapping.timer, "timer", "field_71428_T");
+            return (Timer)timerField.get(Minecraft.getMinecraft());
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException("Failed to resolve Minecraft timer", e);
+        }
+    }
+
+    private static float getTickLength0(final Timer timer) {
+        try {
+            return findField(Timer.class, Mapping.tickLength, "tickLength", "field_194149_e").getFloat(timer);
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException("Failed to read Timer.tickLength", e);
+        }
+    }
+
+    private static void setTickLength0(final Timer timer, final float tickLength) {
+        try {
+            findField(Timer.class, Mapping.tickLength, "tickLength", "field_194149_e").setFloat(timer, tickLength);
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException("Failed to write Timer.tickLength", e);
+        }
+    }
+
+    private static Field findField(final Class<?> owner, final String... candidates) throws NoSuchFieldException {
+        for (final String candidate : candidates) {
+            try {
+                final Field field = owner.getDeclaredField(candidate);
+                field.setAccessible(true);
+                return field;
+            }
+            catch (NoSuchFieldException ignored) {}
+        }
+        throw new NoSuchFieldException(owner.getName());
     }
     
     private static float getMultiplier() {

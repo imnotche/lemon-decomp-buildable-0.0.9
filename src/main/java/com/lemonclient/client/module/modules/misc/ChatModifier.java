@@ -56,9 +56,7 @@ public class ChatModifier extends Module
                 }
                 final String dateFormat = this.format.getValue().replace("H24", "k").replace("H12", "h");
                 final String date = new SimpleDateFormat(dateFormat).format(new Date());
-                new TextComponentString(ChatFormatting.getByName(this.color.getValue()) + decoLeft + date + decoRight + ChatFormatting.RESET);
-                final TextComponentString textComponentString = null;
-                final TextComponentString time = textComponentString;
+                final TextComponentString time = new TextComponentString(ChatFormatting.getByName(this.color.getValue()) + decoLeft + date + decoRight + ChatFormatting.RESET);
                 event.setMessage(time.appendSibling(event.getMessage()));
             }
         }, new Predicate[0]);

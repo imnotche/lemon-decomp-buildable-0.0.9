@@ -54,6 +54,9 @@ public class AutoSkull extends Module
         this.disable = this.registerBoolean("Auto Disable", true);
         this.timer = new Timing();
         this.inputUpdateEventListener = new Listener<InputUpdateEvent>(event -> {
+            if (AutoSkull.mc.player == null || AutoSkull.mc.world == null) {
+                return;
+            }
             if (this.disable.getValue()) {
                 if (event.getMovementInput() instanceof MovementInputFromOptions) {
                     if (event.getMovementInput().jump) {

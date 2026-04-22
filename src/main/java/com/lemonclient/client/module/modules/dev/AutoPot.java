@@ -201,9 +201,7 @@ public class AutoPot extends Module
                         }
                     }
                     if (event.getPhase() == Phase.PRE) {
-                        new PlayerPacket(this, new Vec2f(PlayerPacketManager.INSTANCE.getServerSideRotation().x, 90.0f));
-                        final PlayerPacket playerPacket = null;
-                        final PlayerPacket packet = playerPacket;
+                        final PlayerPacket packet = new PlayerPacket(this, new Vec2f(PlayerPacketManager.INSTANCE.getServerSideRotation().x, 90.0f));
                         PlayerPacketManager.INSTANCE.addPacket(packet);
                     }
                     if (event.getPhase() == Phase.POST && (PlayerPacketManager.INSTANCE.getPrevServerSideRotation().y > 85.0f || PlayerPacketManager.INSTANCE.getServerSideRotation().y > 85.0f)) {

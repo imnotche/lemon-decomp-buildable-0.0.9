@@ -97,11 +97,7 @@ public class BreakHighlight extends Module
                                 }
                             }
                             else {
-                                final HashMap<EntityPlayer, renderBlock> list = this.list;
-                                new renderBlock(new breakPos(blockPos), entityPlayer);
-                                final renderBlock value = null;
-                                final Object key = new Object();
-                                list.put((EntityPlayer)key, value);
+                                this.list.put(entityPlayer, new renderBlock(new breakPos(blockPos), entityPlayer));
                             }
                         }
                     }

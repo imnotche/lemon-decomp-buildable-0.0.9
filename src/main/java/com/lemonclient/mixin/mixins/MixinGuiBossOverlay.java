@@ -1,23 +1,18 @@
-// 
-// Decompiled by Procyon v0.6.0
-// 
-
 package com.lemonclient.mixin.mixins;
 
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import com.lemonclient.client.LemonClient;
 import com.lemonclient.api.event.events.BossbarEvent;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import com.lemonclient.client.LemonClient;
 import net.minecraft.client.gui.GuiBossOverlay;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin({ GuiBossOverlay.class })
-public class MixinGuiBossOverlay
-{
-    @Inject(method = { "renderBossHealth" }, at = { @At("HEAD") }, cancellable = true)
-    private void renderBossHealth(final CallbackInfo callbackInfo) {
-        final BossbarEvent event = new BossbarEvent();
+@Mixin(value={GuiBossOverlay.class})
+public class MixinGuiBossOverlay {
+    @Inject(method={"renderBossHealth"}, at={@At(value="HEAD")}, cancellable=true)
+    private void renderBossHealth(CallbackInfo callbackInfo) {
+        BossbarEvent event = new BossbarEvent();
         LemonClient.EVENT_BUS.post(event);
         if (event.isCancelled()) {
             callbackInfo.cancel();

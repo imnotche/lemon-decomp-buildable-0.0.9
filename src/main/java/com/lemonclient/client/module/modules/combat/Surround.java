@@ -101,6 +101,9 @@ public class Surround extends Module
         this.sides = new BlockPos[] { new BlockPos(1, 0, 0), new BlockPos(-1, 0, 0), new BlockPos(0, 0, -1), new BlockPos(0, 0, 1) };
         this.neighbour = new BlockPos[] { new BlockPos(0, -1, 0), new BlockPos(1, 0, 0), new BlockPos(-1, 0, 0), new BlockPos(0, 0, -1), new BlockPos(0, 0, 1), new BlockPos(0, 1, 0) };
         this.inputUpdateEventListener = new Listener<InputUpdateEvent>(event -> {
+            if (Surround.mc.player == null || Surround.mc.world == null) {
+                return;
+            }
             if (event.getMovementInput() instanceof MovementInputFromOptions) {
                 if (event.getMovementInput().jump) {
                     this.disable();

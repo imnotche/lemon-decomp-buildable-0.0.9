@@ -1,129 +1,104 @@
-// 
-// Decompiled by Procyon v0.6.0
-// 
-
 package com.lemonclient.client.module.modules.movement;
 
-import com.lemonclient.api.util.player.PlacementUtil;
-import net.minecraft.network.play.client.CPacketHeldItemChange;
-import net.minecraft.block.BlockFalling;
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.client.CPacketPlayer;
-import net.minecraft.util.EnumHand;
-import com.lemonclient.api.util.misc.MessageBus;
-import com.lemonclient.api.util.chat.Notification;
-import com.lemonclient.client.module.ModuleManager;
-import com.lemonclient.client.module.modules.gui.ColorMain;
-import net.minecraft.item.ItemChorusFruit;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import me.zero.alpine.listener.EventHandler;
 import com.lemonclient.api.event.events.PlayerMoveEvent;
-import me.zero.alpine.listener.Listener;
 import com.lemonclient.api.setting.values.BooleanSetting;
 import com.lemonclient.api.setting.values.DoubleSetting;
 import com.lemonclient.api.setting.values.ModeSetting;
+import com.lemonclient.api.util.chat.Notification;
+import com.lemonclient.api.util.misc.MessageBus;
+import com.lemonclient.api.util.player.PlacementUtil;
 import com.lemonclient.client.module.Category;
 import com.lemonclient.client.module.Module;
+import com.lemonclient.client.module.ModuleManager;
+import com.lemonclient.client.module.modules.gui.ColorMain;
+import java.util.Arrays;
+import java.util.function.Predicate;
+import me.zero.alpine.listener.EventHandler;
+import me.zero.alpine.listener.Listener;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockFalling;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemChorusFruit;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.client.CPacketHeldItemChange;
+import net.minecraft.network.play.client.CPacketPlayer;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 
-@Module.Declaration(name = "AntiVoid", category = Category.Movement)
-public class AntiVoid extends Module
-{
-    ModeSetting mode;
-    DoubleSetting height;
-    BooleanSetting chorus;
-    BooleanSetting packetFly;
+@Module.Declaration(name="AntiVoid", category=Category.Movement)
+public class AntiVoid
+        extends Module {
+    ModeSetting mode = this.registerMode("Mode", Arrays.asList("Freeze", "Glitch", "Catch"), "Freeze");
+    DoubleSetting height = this.registerDouble("Height", 2.0, 0.0, 5.0);
+    BooleanSetting chorus = this.registerBoolean("Chorus", false, () -> ((String)this.mode.getValue()).equals("Freeze"));
+    BooleanSetting packetFly = this.registerBoolean("PacketFly", false, () -> ((String)this.mode.getValue()).equals("Catch"));
     boolean chorused;
     @EventHandler
-    private final Listener<PlayerMoveEvent> playerMoveEventListener;
-    
-    public AntiVoid() {
-        // 
-        // This method could not be decompiled.
-        // 
-        // Original Bytecode:
-        // 
-        //     1: invokespecial   com/lemonclient/client/module/Module.<init>:()V
-        //     4: aload_0         /* this */
-        //     5: aload_0         /* this */
-        //     6: ldc             "Mode"
-        //     8: iconst_3       
-        //     9: anewarray       Ljava/lang/String;
-        //    12: dup            
-        //    13: iconst_0       
-        //    14: ldc             "Freeze"
-        //    16: aastore        
-        //    17: dup            
-        //    18: iconst_1       
-        //    19: ldc             "Glitch"
-        //    21: aastore        
-        //    22: dup            
-        //    23: iconst_2       
-        //    24: ldc             "Catch"
-        //    26: aastore        
-        //    27: invokestatic    java/util/Arrays.asList:([Ljava/lang/Object;)Ljava/util/List;
-        //    30: ldc             "Freeze"
-        //    32: invokevirtual   com/lemonclient/client/module/modules/movement/AntiVoid.registerMode:(Ljava/lang/String;Ljava/util/List;Ljava/lang/String;)Lcom/lemonclient/api/setting/values/ModeSetting;
-        //    35: putfield        com/lemonclient/client/module/modules/movement/AntiVoid.mode:Lcom/lemonclient/api/setting/values/ModeSetting;
-        //    38: aload_0         /* this */
-        //    39: aload_0         /* this */
-        //    40: ldc             "Height"
-        //    42: ldc2_w          2.0
-        //    45: dconst_0       
-        //    46: ldc2_w          5.0
-        //    49: invokevirtual   com/lemonclient/client/module/modules/movement/AntiVoid.registerDouble:(Ljava/lang/String;DDD)Lcom/lemonclient/api/setting/values/DoubleSetting;
-        //    52: putfield        com/lemonclient/client/module/modules/movement/AntiVoid.height:Lcom/lemonclient/api/setting/values/DoubleSetting;
-        //    55: aload_0         /* this */
-        //    56: aload_0         /* this */
-        //    57: ldc             "Chorus"
-        //    59: iconst_0       
-        //    60: aload_0         /* this */
-        //    61: invokedynamic   BootstrapMethod #0, get:(Lcom/lemonclient/client/module/modules/movement/AntiVoid;)Ljava/util/function/Supplier;
-        //    66: invokevirtual   com/lemonclient/client/module/modules/movement/AntiVoid.registerBoolean:(Ljava/lang/String;ZLjava/util/function/Supplier;)Lcom/lemonclient/api/setting/values/BooleanSetting;
-        //    69: putfield        com/lemonclient/client/module/modules/movement/AntiVoid.chorus:Lcom/lemonclient/api/setting/values/BooleanSetting;
-        //    72: aload_0         /* this */
-        //    73: aload_0         /* this */
-        //    74: ldc             "PacketFly"
-        //    76: iconst_0       
-        //    77: aload_0         /* this */
-        //    78: invokedynamic   BootstrapMethod #1, get:(Lcom/lemonclient/client/module/modules/movement/AntiVoid;)Ljava/util/function/Supplier;
-        //    83: invokevirtual   com/lemonclient/client/module/modules/movement/AntiVoid.registerBoolean:(Ljava/lang/String;ZLjava/util/function/Supplier;)Lcom/lemonclient/api/setting/values/BooleanSetting;
-        //    86: putfield        com/lemonclient/client/module/modules/movement/AntiVoid.packetFly:Lcom/lemonclient/api/setting/values/BooleanSetting;
-        //    89: aload_0         /* this */
-        //    90: new             Lme/zero/alpine/listener/Listener;
-        //    93: dup            
-        //    94: aload_0         /* this */
-        //    95: invokedynamic   BootstrapMethod #2, invoke:(Lcom/lemonclient/client/module/modules/movement/AntiVoid;)Lme/zero/alpine/listener/EventHook;
-        //   100: iconst_0       
-        //   101: anewarray       Ljava/util/function/Predicate;
-        //   104: invokespecial   me/zero/alpine/listener/Listener.<init>:(Lme/zero/alpine/listener/EventHook;[Ljava/util/function/Predicate;)V
-        //   107: putfield        com/lemonclient/client/module/modules/movement/AntiVoid.playerMoveEventListener:Lme/zero/alpine/listener/Listener;
-        //   110: return         
-        // 
-        // The error that occurred was:
-        // 
-        // java.lang.NullPointerException: Cannot invoke "com.strobel.assembler.metadata.TypeReference.getSimpleType()" because the return value of "com.strobel.decompiler.ast.Variable.getType()" is null
-        //     at com.strobel.decompiler.languages.java.ast.NameVariables.generateNameForVariable(NameVariables.java:252)
-        //     at com.strobel.decompiler.languages.java.ast.NameVariables.assignNamesToVariables(NameVariables.java:185)
-        //     at com.strobel.decompiler.languages.java.ast.AstMethodBodyBuilder.nameVariables(AstMethodBodyBuilder.java:1482)
-        //     at com.strobel.decompiler.languages.java.ast.AstMethodBodyBuilder.populateVariables(AstMethodBodyBuilder.java:1411)
-        //     at com.strobel.decompiler.languages.java.ast.AstMethodBodyBuilder.createMethodBody(AstMethodBodyBuilder.java:210)
-        //     at com.strobel.decompiler.languages.java.ast.AstMethodBodyBuilder.createMethodBody(AstMethodBodyBuilder.java:93)
-        //     at com.strobel.decompiler.languages.java.ast.AstBuilder.createMethodBody(AstBuilder.java:868)
-        //     at com.strobel.decompiler.languages.java.ast.AstBuilder.createConstructor(AstBuilder.java:799)
-        //     at com.strobel.decompiler.languages.java.ast.AstBuilder.addTypeMembers(AstBuilder.java:635)
-        //     at com.strobel.decompiler.languages.java.ast.AstBuilder.createTypeCore(AstBuilder.java:605)
-        //     at com.strobel.decompiler.languages.java.ast.AstBuilder.createTypeNoCache(AstBuilder.java:195)
-        //     at com.strobel.decompiler.languages.java.ast.AstBuilder.createType(AstBuilder.java:162)
-        //     at com.strobel.decompiler.languages.java.ast.AstBuilder.addType(AstBuilder.java:137)
-        //     at com.strobel.decompiler.languages.java.JavaLanguage.buildAst(JavaLanguage.java:71)
-        //     at com.strobel.decompiler.languages.java.JavaLanguage.decompileType(JavaLanguage.java:59)
-        //     at com.strobel.decompiler.DecompilerDriver.decompileType(DecompilerDriver.java:333)
-        //     at com.strobel.decompiler.DecompilerDriver.decompileJar(DecompilerDriver.java:254)
-        //     at com.strobel.decompiler.DecompilerDriver.main(DecompilerDriver.java:144)
-        // 
-        throw new IllegalStateException("An error occurred while decompiling this method.");
-    }
+    private final Listener<PlayerMoveEvent> playerMoveEventListener = new Listener<PlayerMoveEvent>(event -> {
+        try {
+            if (AntiVoid.mc.player.posY < (Double)this.height.getValue() + 0.1 && ((String)this.mode.getValue()).equalsIgnoreCase("Freeze") && AntiVoid.mc.world.getBlockState(new BlockPos(AntiVoid.mc.player.posX, 0.0, AntiVoid.mc.player.posZ)).getMaterial().isReplaceable()) {
+                switch ((String)this.mode.getValue()) {
+                    case "Freeze": {
+                        AntiVoid.mc.player.posY = (Double)this.height.getValue();
+                        event.setY(0.0);
+                        if (AntiVoid.mc.player.getRidingEntity() != null) {
+                            AntiVoid.mc.player.ridingEntity.setVelocity(0.0, 0.0, 0.0);
+                        }
+                        if (!((Boolean)this.chorus.getValue()).booleanValue()) break;
+                        int newSlot = -1;
+                        for (int i = 0; i < 9; ++i) {
+                            ItemStack stack = AntiVoid.mc.player.inventory.getStackInSlot(i);
+                            if (stack == ItemStack.EMPTY || !(stack.getItem() instanceof ItemChorusFruit)) continue;
+                            newSlot = i;
+                            break;
+                        }
+                        if (newSlot == -1) {
+                            newSlot = 1;
+                            MessageBus.sendClientPrefixMessage(ModuleManager.getModule(ColorMain.class).getDisabledColor() + "Out of chorus!", Notification.Type.ERROR);
+                            this.chorused = false;
+                        } else {
+                            this.chorused = true;
+                        }
+                        if (!this.chorused) break;
+                        AntiVoid.mc.player.inventory.currentItem = newSlot;
+                        if (!AntiVoid.mc.player.canEat(true)) break;
+                        AntiVoid.mc.player.setActiveHand(EnumHand.MAIN_HAND);
+                        break;
+                    }
+                    case "Glitch": {
+                        AntiVoid.mc.player.connection.sendPacket((Packet)new CPacketPlayer.Position(AntiVoid.mc.player.posX, AntiVoid.mc.player.posY + 69.0, AntiVoid.mc.player.posZ, AntiVoid.mc.player.onGround));
+                        break;
+                    }
+                    case "Catch": {
+                        int oldSlot = AntiVoid.mc.player.inventory.currentItem;
+                        int newSlot = -1;
+                        for (int i = 0; i < 9; ++i) {
+                            ItemStack stack = AntiVoid.mc.player.inventory.getStackInSlot(i);
+                            if (stack == ItemStack.EMPTY || !(stack.getItem() instanceof ItemBlock) || !Block.getBlockFromItem((Item)stack.getItem()).getDefaultState().isFullBlock() || ((ItemBlock)stack.getItem()).getBlock() instanceof BlockFalling) continue;
+                            newSlot = i;
+                            break;
+                        }
+                        if (newSlot == -1) {
+                            newSlot = 1;
+                            MessageBus.sendClientPrefixMessage(ModuleManager.getModule(ColorMain.class).getDisabledColor() + "Out of valid blocks. Disabling!", Notification.Type.DISABLE);
+                            this.disable();
+                        }
+                        AntiVoid.mc.player.connection.sendPacket((Packet)new CPacketHeldItemChange(newSlot));
+                        PlacementUtil.place(new BlockPos(AntiVoid.mc.player.posX, 0.0, AntiVoid.mc.player.posZ), EnumHand.MAIN_HAND, true);
+                        if (AntiVoid.mc.world.getBlockState(new BlockPos(AntiVoid.mc.player.posX, 0.0, AntiVoid.mc.player.posZ)).getMaterial().isReplaceable() && ((Boolean)this.packetFly.getValue()).booleanValue()) {
+                            AntiVoid.mc.player.connection.sendPacket((Packet)new CPacketPlayer.PositionRotation(AntiVoid.mc.player.posX + AntiVoid.mc.player.motionX, AntiVoid.mc.player.posY + 0.0624, AntiVoid.mc.player.posZ + AntiVoid.mc.player.motionZ, AntiVoid.mc.player.rotationYaw, AntiVoid.mc.player.rotationPitch, false));
+                            AntiVoid.mc.player.connection.sendPacket((Packet)new CPacketPlayer.PositionRotation(AntiVoid.mc.player.posX, AntiVoid.mc.player.posY + 69420.0, AntiVoid.mc.player.posZ, AntiVoid.mc.player.rotationYaw, AntiVoid.mc.player.rotationPitch, false));
+                        }
+                        AntiVoid.mc.player.connection.sendPacket((Packet)new CPacketHeldItemChange(oldSlot));
+                        break;
+                    }
+                }
+            }
+        }
+        catch (Exception exception) {
+            // empty catch block
+        }
+    }, new Predicate[0]);
 }

@@ -1,28 +1,23 @@
-// 
-// Decompiled by Procyon v0.6.0
-// 
-
 package com.lemonclient.mixin.mixins.accessor;
 
-import org.spongepowered.asm.mixin.gen.Accessor;
 import net.minecraft.network.play.client.CPacketVehicleMove;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin({ CPacketVehicleMove.class })
-public interface AccessorCPacketVehicleMove
-{
-    @Accessor("y")
-    void setY(final double p0);
-    
-    @Accessor("x")
-    void setX(final double p0);
-    
-    @Accessor("z")
-    void setZ(final double p0);
-    
-    @Accessor("yaw")
-    void setYaw(final float p0);
-    
-    @Accessor("pitch")
-    void setPitch(final float p0);
+@Mixin(value={CPacketVehicleMove.class})
+public interface AccessorCPacketVehicleMove {
+    @Accessor(value="y")
+    public void setY(double var1);
+
+    @Accessor(value="x")
+    public void setX(double var1);
+
+    @Accessor(value="z")
+    public void setZ(double var1);
+
+    @Accessor(value="yaw")
+    public void setYaw(float var1);
+
+    @Accessor(value="pitch")
+    public void setPitch(float var1);
 }

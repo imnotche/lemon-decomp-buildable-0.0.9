@@ -41,6 +41,9 @@ public class BlockMove extends Module
         this.timer = new Timing();
         this.sides = new Vec3d[] { new Vec3d(0.24, 0.0, 0.24), new Vec3d(-0.24, 0.0, 0.24), new Vec3d(0.24, 0.0, -0.24), new Vec3d(-0.24, 0.0, -0.24) };
         this.inputUpdateEventListener = new Listener<InputUpdateEvent>(event -> {
+            if (BlockMove.mc.player == null || BlockMove.mc.world == null) {
+                return;
+            }
             Vec3d vec = BlockMove.mc.player.getPositionVector();
             boolean air = true;
             final AxisAlignedBB playerBox = BlockMove.mc.player.boundingBox;
@@ -74,7 +77,10 @@ public class BlockMove extends Module
                             playerPos = PlayerUtil.getPlayerPos();
                         }
                         else {
-                            new BlockPos((double)Math.round(vec.x), vec.y, (double)Math.round(vec.z));
+                            playerPos = new BlockPos((double)Math.round(vec.x), vec.y, (double)Math.round(vec.z));
+                        }
+                        if (playerPos == null) {
+                            return;
                         }
                         final BlockPos pos2 = playerPos;
                         final EnumFacing facing = BlockMove.mc.player.getHorizontalFacing();
@@ -129,6 +135,9 @@ public class BlockMove extends Module
     }
     
     private Vec3d pos(final BlockPos pos) {
+        if (BlockMove.mc.world == null) {
+            return null;
+        }
         if (this.middle.getValue()) {
             return new Vec3d(pos.x + 0.5, pos.y, pos.z + 0.5);
         }

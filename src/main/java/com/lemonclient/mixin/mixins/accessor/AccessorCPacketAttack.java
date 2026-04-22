@@ -1,22 +1,17 @@
-// 
-// Decompiled by Procyon v0.6.0
-// 
-
 package com.lemonclient.mixin.mixins.accessor;
 
-import org.spongepowered.asm.mixin.gen.Accessor;
 import net.minecraft.network.play.client.CPacketUseEntity;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin({ CPacketUseEntity.class })
-public interface AccessorCPacketAttack
-{
-    @Accessor("entityId")
-    int getId();
-    
-    @Accessor("entityId")
-    void setId(final int p0);
-    
-    @Accessor("action")
-    void setAction(final CPacketUseEntity.Action p0);
+@Mixin(value={CPacketUseEntity.class})
+public interface AccessorCPacketAttack {
+    @Accessor(value="entityId")
+    public int getId();
+
+    @Accessor(value="entityId")
+    public void setId(int var1);
+
+    @Accessor(value="action")
+    public void setAction(CPacketUseEntity.Action var1);
 }

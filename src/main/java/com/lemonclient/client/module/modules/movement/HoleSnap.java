@@ -310,9 +310,7 @@ public class HoleSnap extends Module
                                 }
                             }
                         }
-                        new HoleBlock(pos, (near ? target.getDistance(pos.x + 0.5, pos.y, pos.z + 0.5) : HoleSnap.mc.player.getDistance(pos.x + 0.5, pos.y, pos.z + 0.5)) + (this.bedrock.getValue() ? ((holeInfo.getSafety() == HoleUtil.BlockSafety.UNBREAKABLE) ? -100 : 0) : 0));
-                        final HoleBlock holeBlock = null;
-                        holes.add(holeBlock);
+                        holes.add(new HoleBlock(pos, (near ? target.getDistance(pos.x + 0.5, pos.y, pos.z + 0.5) : HoleSnap.mc.player.getDistance(pos.x + 0.5, pos.y, pos.z + 0.5)) + (this.bedrock.getValue() ? ((holeInfo.getSafety() == HoleUtil.BlockSafety.UNBREAKABLE) ? -100 : 0) : 0)));
                     }
                 }
             }

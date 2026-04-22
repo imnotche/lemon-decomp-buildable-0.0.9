@@ -1,37 +1,32 @@
-// 
-// Decompiled by Procyon v0.6.0
-// 
-
 package com.lemonclient.mixin.mixins.accessor;
 
-import org.spongepowered.asm.mixin.gen.Accessor;
 import net.minecraft.network.play.client.CPacketPlayer;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin({ CPacketPlayer.class })
-public interface AccessorCPacketPlayer
-{
-    @Accessor("x")
-    void setX(final double p0);
-    
-    @Accessor("y")
-    void setY(final double p0);
-    
-    @Accessor("z")
-    void setZ(final double p0);
-    
-    @Accessor("yaw")
-    void setYaw(final float p0);
-    
-    @Accessor("pitch")
-    void setPitch(final float p0);
-    
-    @Accessor("onGround")
-    void setOnGround(final boolean p0);
-    
-    @Accessor("moving")
-    boolean getMoving();
-    
-    @Accessor("rotating")
-    boolean getRotating();
+@Mixin(value={CPacketPlayer.class})
+public interface AccessorCPacketPlayer {
+    @Accessor(value="x")
+    public void setX(double var1);
+
+    @Accessor(value="y")
+    public void setY(double var1);
+
+    @Accessor(value="z")
+    public void setZ(double var1);
+
+    @Accessor(value="yaw")
+    public void setYaw(float var1);
+
+    @Accessor(value="pitch")
+    public void setPitch(float var1);
+
+    @Accessor(value="onGround")
+    public void setOnGround(boolean var1);
+
+    @Accessor(value="moving")
+    public boolean getMoving();
+
+    @Accessor(value="rotating")
+    public boolean getRotating();
 }

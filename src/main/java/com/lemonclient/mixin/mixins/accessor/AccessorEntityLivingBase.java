@@ -1,16 +1,11 @@
-// 
-// Decompiled by Procyon v0.6.0
-// 
-
 package com.lemonclient.mixin.mixins.accessor;
 
-import org.spongepowered.asm.mixin.gen.Invoker;
 import net.minecraft.entity.EntityLivingBase;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Invoker;
 
-@Mixin({ EntityLivingBase.class })
-public interface AccessorEntityLivingBase
-{
-    @Invoker("onItemUseFinish")
-    void invokeOnItemUseFinish();
+@Mixin(value={EntityLivingBase.class})
+public interface AccessorEntityLivingBase {
+    @Invoker(value="onItemUseFinish")
+    public void invokeOnItemUseFinish();
 }

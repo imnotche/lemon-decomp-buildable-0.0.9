@@ -1,5 +1,6 @@
 {
   "required": true,
+  "minVersion": "0.7.4",
   "compatibilityLevel": "JAVA_8",
   "package": "com.lemonclient.mixin.mixins",
   "refmap": "mixins.gamesense.refmap.json",
@@ -7,19 +8,23 @@
     "MixinBlockLiquid",
     "MixinBlockSoulSand",
     "MixinC00Handshake",
+    "MixinEntity",
+    "MixinEntityLivingBase",
+    "MixinEntityPlayer",
+    "MixinEntityPlayerSP",
+    "MixinEntityRenderer",
+    "MixinFontRenderer",
+    "MixinForgeHooks",
     "MixinGuiBossOverlay",
     "MixinGuiNewChat",
     "MixinGuiPlayerTabOverlay",
+    "MixinGuiScreen",
+    "MixinInventoryPlayer",
     "MixinItemRenderer",
     "MixinLayerBipedArmor",
     "MixinMinecraft",
     "MixinMovementInputFromOptions",
     "MixinNetworkManager",
-    "MixinEntityLivingBase",
-    "MixinEntityPlayer",
-    "MixinEntityPlayerSP",
-    "MixinEntity",
-    "MixinEntityRenderer",
     "MixinPlayerControllerMP",
     "MixinPlayerOverlay",
     "MixinRenderGlobal",
@@ -31,7 +36,10 @@
     "accessor.AccessorCPacketCustomPayload",
     "accessor.AccessorCPacketPlayer",
     "accessor.AccessorCPacketUseEntity",
-    "accessor.AccessorEntityPlayerSP"
+    "accessor.AccessorCPacketVehicleMove",
+    "accessor.AccessorEntityLivingBase",
+    "accessor.AccessorEntityPlayerSP",
+    "accessor.AccessorSPacketPlayerPosLook"
   ],
   "client": [
     "MixinAbstractClientPlayer",
@@ -39,7 +47,9 @@
     "MixinNetHandlerPlayClient",
     "MixinRender",
     "MixinRenderCrystal",
+    "MixinWorldClient",
     "accessor.AccessorMinecraft",
+    "accessor.AccessorPlayerControllerMP",
     "accessor.AccessorTimer"
   ]
 }

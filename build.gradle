@@ -23,6 +23,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 version project.modVersion
 group project.modGroup
+archivesBaseName = project.modBaseName
 
 compileJava {
 	sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
@@ -107,6 +108,7 @@ shadowJar {
 	relocate 'javax.websocket', 'shaded.websocket'
 	project.configurations.implementation.canBeResolved = true
 	configurations = [project.configurations.implementation]
+	from("$buildDir/tmp/compileJava/mixins.gamesense.refmap.json")
 	relocate 'org.glassfish', 'shaded.glassfish'
 	relocate 'javax.websocket', 'shaded.websocket'
 	dependencies {
@@ -140,10 +142,13 @@ reobf {
 	}
 }
 
+reobfShadowJar {
+	mustRunAfter shadowJar
+}
+
 jar {
 	manifest {
 		attributes(
-				'MixinConfigs': 'mixins.gamesense.json',
 				'tweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
 				'TweakOrder': 0,
 				'FMLCorePluginContainsFMLMod': 'true',
@@ -154,4 +159,6 @@ jar {
 	}
 }
 
-build.dependsOn(shadowJar)
+shadowJar.finalizedBy(reobfShadowJar)
+assemble.dependsOn(reobfShadowJar)
+build.dependsOn(reobfShadowJar)
