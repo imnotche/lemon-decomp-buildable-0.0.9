@@ -1,6 +1,10 @@
 Best gamesense skid lol
 
+
 一応buildできる状態にしただけなので起動しなかったりmoduleが動かなかったりしても文句を言わないでください
 
+
 起動確認とある程度のmoduleテスト済み
+
+
 これが本当にlemon0.0.9か知らない
