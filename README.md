@@ -1,0 +1,3 @@
+Best gamesense skid lol
+
+一応buildできる状態にしただけなので起動しなかったりmoduleが動かなかったりしても文句を言わないでください

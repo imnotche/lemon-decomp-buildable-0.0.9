@@ -1,0 +1,22 @@
+[
+	{
+		"modid": "lemon",
+		"name": "Lemon",
+		"description": "Premium lemon",
+		"version": "0.0.9",
+		"mcversion": "1.12.2",
+		"url": "",
+		"updateUrl": "",
+		"logoFile": "assets/gamesense/lemonclient.png",
+		"authorList": ["you"],
+		"credits": "Lemon",
+		"screenshots": [],
+		"dependencies": []
+	},
+	{
+		"modid": "peek",
+		"name": "PeekBypass",
+		"version": "v1.0",
+		"mcversion": "1.12.2"
+	}
+]
